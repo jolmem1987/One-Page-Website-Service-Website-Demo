@@ -20,7 +20,9 @@ import type { ActionResult } from "./types";
 /* ============================ helpers ============================ */
 
 // Message shown when a visitor tries to edit on the public demo deployment.
-export const DEMO_READONLY_MESSAGE =
+// Not exported: this is a "use server" file, where every export must be an
+// async function.
+const DEMO_READONLY_MESSAGE =
   "This is a demonstration site, so editing is turned off to keep the panel clean for every visitor. On your own live website, you would be the only person with access here — with full control to edit every part of your site.";
 
 async function guard(): Promise<ActionResult | null> {
