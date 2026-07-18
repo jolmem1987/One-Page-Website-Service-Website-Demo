@@ -325,6 +325,3 @@ export type LeadActivityRow = typeof leadActivities.$inferSelect;
 export type EmailMessageRow = typeof emailMessages.$inferSelect;
 export type SiteSettingsRow = typeof siteSettings.$inferSelect;
 export type AdminUserRow = typeof adminUsers.$inferSelect;
-
-// Keep the unused sql import referenced for future raw-SQL defaults without breaking lint.
-export const _sqlHelper = sql;
