@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Summit Ridge Roofing">
+  <rect width="1200" height="630" fill="#1f2933"/>
+  <polygon points="0,630 600,300 1200,630" fill="#26333f"/>
+  <rect x="70" y="70" width="70" height="70" rx="10" fill="#e07a24"/>
+  <text x="160" y="122" font-family="Georgia,serif" font-size="52" fill="#fff">Summit Ridge Roofing</text>
+  <text x="72" y="210" font-family="system-ui,sans-serif" font-size="30" fill="#c7cfd8">Roof Repair &amp; Replacement in Kenosha, WI</text>
+  <text x="72" y="560" font-family="system-ui,sans-serif" font-size="22" fill="#8b97a3">Demonstration site — Contractor Website Starter</text>
+</svg>

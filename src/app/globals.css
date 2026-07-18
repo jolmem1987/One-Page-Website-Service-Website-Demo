@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Fallback theme variables. The admin panel overrides --brand-* and --font-*
+ * at runtime via an injected <style> block (see ThemeStyle), so branding can
+ * change without editing source. These defaults keep the site readable even if
+ * no branding is configured.
+ */
+:root {
+  --brand-primary: 31 41 51; /* charcoal */
+  --brand-secondary: 11 37 69; /* navy */
+  --brand-accent: 224 122 36; /* construction orange */
+  --brand-on-primary: 255 255 255;
+
+  --color-ink: 24 28 33;
+  --color-surface: 255 255 255;
+  --color-muted: 244 245 247;
+
+  --font-heading: Georgia, "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-surface text-ink font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading;
+  }
+  /* Visible keyboard focus for accessibility. */
+  :focus-visible {
+    outline: 3px solid rgb(var(--brand-accent));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-5 py-3 text-sm font-semibold
+      transition-colors focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    background-color: rgb(var(--brand-accent));
+    color: rgb(var(--brand-on-primary));
+  }
+  .btn-primary:hover {
+    filter: brightness(0.93);
+  }
+  .btn-dark {
+    background-color: rgb(var(--brand-primary));
+    color: rgb(var(--brand-on-primary));
+  }
+  .btn-dark:hover {
+    filter: brightness(1.15);
+  }
+  .btn-outline {
+    @apply border-2 bg-transparent;
+    border-color: rgb(var(--brand-primary));
+    color: rgb(var(--brand-primary));
+  }
+  .section {
+    @apply py-14 sm:py-20;
+  }
+  .eyebrow {
+    @apply text-sm font-semibold uppercase tracking-wider;
+    color: rgb(var(--brand-accent));
+  }
+  .card {
+    @apply rounded-lg border border-black/10 bg-white p-6 shadow-sm;
+  }
+  /* Admin-specific input styling reused across forms. */
+  .field-label {
+    @apply mb-1 block text-sm font-medium text-ink;
+  }
+  .field-input {
+    @apply w-full rounded-md border border-black/20 px-3 py-2 text-sm shadow-sm
+      focus:border-brand-accent focus:ring-1 focus:ring-brand-accent;
+  }
+  .field-hint {
+    @apply mt-1 text-xs text-black/55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
