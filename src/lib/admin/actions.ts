@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { getSessionUser, login, logout } from "../auth";
+import { getSessionUser, isOpenAdminDemo, login, logout } from "../auth";
 import { loginSchema, businessInfoSchema, hexColor } from "../validation";
 import { rateLimit } from "../rate-limit";
 import { getSiteConfig } from "../data";
@@ -19,7 +19,14 @@ import type { ActionResult } from "./types";
 
 /* ============================ helpers ============================ */
 
+// Message shown when a visitor tries to edit on the public demo deployment.
+export const DEMO_READONLY_MESSAGE =
+  "This is a demonstration site, so editing is turned off to keep the panel clean for every visitor. On your own live website, you would be the only person with access here — with full control to edit every part of your site.";
+
 async function guard(): Promise<ActionResult | null> {
+  // Demo deployments open the admin panel to everyone for viewing, but block
+  // all edits so no visitor can change the shared demo content.
+  if (isOpenAdminDemo()) return { ok: false, message: DEMO_READONLY_MESSAGE };
   const user = await getSessionUser();
   if (!user) return { ok: false, message: "Your session has expired. Please log in again." };
   return null;
