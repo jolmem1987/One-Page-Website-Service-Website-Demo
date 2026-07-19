@@ -107,7 +107,7 @@ export default async function SeoCenterPage() {
           <div className="sm:col-span-2">
             <label className="field-label">Canonical site URL</label>
             <input name="siteUrl" defaultValue={config.seo.siteUrl} className="field-input" placeholder="https://www.yourbusiness.com" />
-            <p className="field-hint">Your website's official address. Used for links search engines rely on.</p>
+            <p className="field-hint">Your website&apos;s official address. Used for links search engines rely on.</p>
           </div>
           <div>
             <label className="field-label">Default title pattern</label>

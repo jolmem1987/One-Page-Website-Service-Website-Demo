@@ -115,7 +115,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
 
           {isLast ? (
             <SaveForm action={saveOnboardingAction} submitLabel="Finish setup ✓" hidden={{ step: String(current), complete: "true" }}>
-              <p className="text-sm text-black/60">Mark onboarding complete when you're ready to launch.</p>
+              <p className="text-sm text-black/60">Mark onboarding complete when you&apos;re ready to launch.</p>
             </SaveForm>
           ) : (
             <Link href={`/admin/onboarding?step=${current + 1}`} className="btn btn-primary text-sm">

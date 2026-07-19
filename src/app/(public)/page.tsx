@@ -276,7 +276,7 @@ export default async function HomePage() {
           <div>
             <SectionHeading eyebrow="Free estimate" title="Get your free, no-pressure estimate" align="left" />
             <p className="mt-4 max-w-lg text-black/70">
-              Tell us about your project and we'll get back to you to schedule a free on-site estimate.
+              Tell us about your project and we&apos;ll get back to you to schedule a free on-site estimate.
               Prefer to talk now? Call{" "}
               <a href={telHref(b.phone)} className="font-semibold text-brand-accent hover:underline">
                 {b.phone}

@@ -121,7 +121,7 @@ export default async function SettingsPage() {
           {config.isDemo ? (
             <Notice tone="warn">
               Demo mode is ON. A “demonstration site” disclaimer shows on the public site. Turn it off when this becomes a
-              real customer's live website.
+              real customer&apos;s live website.
             </Notice>
           ) : (
             <Notice tone="success">Demo mode is OFF. No demonstration disclaimer is shown.</Notice>

@@ -34,7 +34,7 @@ export default async function AdminDashboard() {
       {!hasDb && (
         <div className="mb-6">
           <Notice tone="warn">
-            No database is connected. You're viewing demo content. Set <code>DATABASE_URL</code>, run{" "}
+            No database is connected. You&apos;re viewing demo content. Set <code>DATABASE_URL</code>, run{" "}
             <code>npm run db:migrate</code> and <code>npm run db:seed</code> to start saving real data.
           </Notice>
         </div>

@@ -40,7 +40,7 @@ export default async function ContentPage() {
           </p>
           <SaveForm action={saveHeroAction} className="space-y-4">
             <div>
-              <label className="field-label">Headline (used as the page's single H1)</label>
+              <label className="field-label">Headline (used as the page&apos;s single H1)</label>
               <input name="headline" defaultValue={config.hero.headline} className="field-input" />
               <CharCount value={config.hero.headline} min={20} max={70} hint="Include your service and city." />
             </div>

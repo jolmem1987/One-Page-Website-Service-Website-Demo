@@ -66,7 +66,7 @@ export default async function GalleryAdminPage() {
 
       <Card>
         <h2 className="font-heading text-lg font-bold">Add a project</h2>
-        <p className="mb-4 text-sm text-black/55">You'll be able to add images and full details after creating it.</p>
+        <p className="mb-4 text-sm text-black/55">You&apos;ll be able to add images and full details after creating it.</p>
         <SaveForm action={createProjectAction} submitLabel="Create project" className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="field-label">Project title</label>

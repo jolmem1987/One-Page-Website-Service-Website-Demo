@@ -93,7 +93,7 @@ export default async function SeoChecklistPage() {
 
       <Card className="mt-8">
         <h2 className="font-semibold">Technical SEO handled automatically for you</h2>
-        <p className="mb-3 text-sm text-black/55">You don't need to do anything for these — the template takes care of them.</p>
+        <p className="mb-3 text-sm text-black/55">You don&apos;t need to do anything for these — the template takes care of them.</p>
         <ul className="grid gap-1.5 text-sm sm:grid-cols-2">
           {automated.map((c) => (
             <li key={c.id} className="flex items-center gap-2 text-black/70">

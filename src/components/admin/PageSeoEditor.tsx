@@ -79,7 +79,7 @@ export function PageSeoEditor({
             <div>
               <label className="field-label">Canonical URL override (leave blank unless needed)</label>
               <input name="canonicalOverride" defaultValue={seo.canonicalOverride ?? ""} className="field-input" placeholder="Usually leave blank" />
-              <p className="field-hint">A canonical URL is the official web address of a page. Only set this if this page's content also lives at another address.</p>
+              <p className="field-hint">A canonical URL is the official web address of a page. Only set this if this page&apos;s content also lives at another address.</p>
             </div>
           </div>
         </details>
