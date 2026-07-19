@@ -6,6 +6,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    // Allow image uploads through Server Actions. Default is 1 MB, which is too
+    // small for photos. Kept comfortably above the 4.5 MB per-image upload cap.
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   images: {
     // Allow remote images from common storage providers. These are safe hosts;
     // add your own storage domain here if you use a different provider.
