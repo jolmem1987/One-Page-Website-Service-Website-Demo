@@ -26,28 +26,16 @@ export interface SessionUser {
 }
 
 /**
- * DEMO MODE — open admin panel.
+ * DEMO MODE — open, read-only admin panel.
  *
- * When DEMO_OPEN_ADMIN="true", the admin panel is open to every visitor with
- * no login, so prospects can explore the CMS. Set this ONLY on demo/showcase
- * deployments; remove it (or set anything else) for a real customer site to
- * restore normal login-required protection.
+ * When DEMO_OPEN_ADMIN="true", visitors can VIEW the admin panel without
+ * logging in (allowed by the protected layout), but cannot save any edits
+ * (blocked by guard() in admin/actions.ts). A real signed-in admin still gets
+ * FULL edit access even while demo mode is on. Remove the flag on a real
+ * customer site to require login for viewing as well.
  */
-export const DEMO_USER_ID = "demo-visitor";
-const DEMO_USER: SessionUser = {
-  id: DEMO_USER_ID,
-  email: "demo@demo.local",
-  name: "Demo Visitor",
-};
-
-/** True when this deployment intentionally opens the admin panel to everyone. */
 export function isOpenAdminDemo(): boolean {
   return process.env.DEMO_OPEN_ADMIN === "true";
-}
-
-/** Fallback identity used when there is no real session. */
-function openAdminFallback(): SessionUser | null {
-  return isOpenAdminDemo() ? DEMO_USER : null;
 }
 
 function hashToken(token: string): string {
@@ -111,11 +99,11 @@ export async function createSessionForUser(userId: string): Promise<void> {
 /** Returns the current session user, or null. Safe to call anywhere on the server. */
 export async function getSessionUser(): Promise<SessionUser | null> {
   const db = getDb();
-  if (!db) return openAdminFallback();
+  if (!db) return null;
 
   const jar = await cookies();
   const token = jar.get(COOKIE_NAME)?.value;
-  if (!token) return openAdminFallback();
+  if (!token) return null;
 
   const tokenHash = hashToken(token);
   const rows = await db
@@ -130,7 +118,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     .limit(1);
 
   const row = rows[0];
-  if (!row) return openAdminFallback();
+  if (!row) return null;
   return { id: row.userId, email: row.email, name: row.name };
 }
 

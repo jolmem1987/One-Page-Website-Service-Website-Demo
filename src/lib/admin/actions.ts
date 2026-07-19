@@ -26,12 +26,13 @@ const DEMO_READONLY_MESSAGE =
   "This is a demonstration site, so editing is turned off to keep the panel clean for every visitor. On your own live website, you would be the only person with access here — with full control to edit every part of your site.";
 
 async function guard(): Promise<ActionResult | null> {
-  // Demo deployments open the admin panel to everyone for viewing, but block
-  // all edits so no visitor can change the shared demo content.
-  if (isOpenAdminDemo()) return { ok: false, message: DEMO_READONLY_MESSAGE };
+  // A real signed-in admin (the owner) always has full edit access.
   const user = await getSessionUser();
-  if (!user) return { ok: false, message: "Your session has expired. Please log in again." };
-  return null;
+  if (user) return null;
+  // Otherwise: on a demo deployment the panel is viewable but read-only, so
+  // block edits with a friendly explanation; elsewhere it's an expired session.
+  if (isOpenAdminDemo()) return { ok: false, message: DEMO_READONLY_MESSAGE };
+  return { ok: false, message: "Your session has expired. Please log in again." };
 }
 
 async function currentUserId(): Promise<string | undefined> {
