@@ -19,19 +19,19 @@ import type { ActionResult } from "./types";
 
 /* ============================ helpers ============================ */
 
-// Message shown when a visitor tries to edit on the public demo deployment.
-// Not exported: this is a "use server" file, where every export must be an
-// async function.
-const DEMO_READONLY_MESSAGE =
-  "This is a demonstration site, so editing is turned off to keep the panel clean for every visitor. On your own live website, you would be the only person with access here — with full control to edit every part of your site.";
+// Shown when a demo visitor "saves": realistic feedback, but nothing is stored.
+// Not exported: this is a "use server" file, where every export must be async.
+const DEMO_SAVE_MESSAGE =
+  "Saved — in demo mode. This is a demonstration site, so your change wasn't stored. On your own live website you'd be the only one with access here, and every edit would save instantly and update your public pages.";
 
 async function guard(): Promise<ActionResult | null> {
   // A real signed-in admin (the owner) always has full edit access.
   const user = await getSessionUser();
   if (user) return null;
-  // Otherwise: on a demo deployment the panel is viewable but read-only, so
-  // block edits with a friendly explanation; elsewhere it's an expired session.
-  if (isOpenAdminDemo()) return { ok: false, message: DEMO_READONLY_MESSAGE };
+  // On a demo deployment, let visitors "mess around": return a realistic success
+  // result that short-circuits the action BEFORE any database write, so nothing
+  // actually persists and the real site's content is never changed.
+  if (isOpenAdminDemo()) return { ok: true, message: DEMO_SAVE_MESSAGE };
   return { ok: false, message: "Your session has expired. Please log in again." };
 }
 

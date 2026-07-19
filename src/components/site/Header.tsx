@@ -15,10 +15,13 @@ export function Header({
   businessName,
   logoUrl,
   phone,
+  showAdminLink = false,
 }: {
   businessName: string;
   logoUrl: string | null;
   phone: string;
+  /** Show an "Admin" link (demo deployments only) so visitors can try the panel. */
+  showAdminLink?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -46,6 +49,14 @@ export function Header({
               {item.label}
             </Link>
           ))}
+          {showAdminLink && (
+            <Link
+              href="/admin"
+              className="rounded-full border border-brand-accent px-3 py-1 text-sm font-semibold text-brand-accent hover:bg-brand-accent hover:text-white"
+            >
+              Admin demo
+            </Link>
+          )}
           <a href={telHref(phone)} className="btn btn-dark text-sm">
             <ServiceIcon name="phone" className="h-4 w-4" /> {phone}
           </a>
@@ -77,6 +88,15 @@ export function Header({
                 {item.label}
               </Link>
             ))}
+            {showAdminLink && (
+              <Link
+                href="/admin"
+                className="rounded px-2 py-3 text-base font-semibold text-brand-accent hover:bg-muted"
+                onClick={() => setOpen(false)}
+              >
+                Admin demo
+              </Link>
+            )}
             <a href={telHref(phone)} className="btn btn-dark mt-2">
               <ServiceIcon name="phone" className="h-4 w-4" /> Call {phone}
             </a>

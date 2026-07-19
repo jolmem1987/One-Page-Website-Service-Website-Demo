@@ -28,11 +28,11 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
         {isDemoVisitor && (
           <div className="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:px-6 lg:px-10">
             <p className="mx-auto max-w-5xl">
-              <span className="font-semibold">Demonstration admin panel — viewing only.</span>{" "}
-              This is a live preview of the control panel that comes with your website. Editing is
-              turned off for visitors so the demo stays clean. On <span className="font-semibold">your</span> real
-              site, this panel is private — you would be the only person with access, with full control to
-              update your business details, content, gallery, leads, and SEO whenever you like.
+              <span className="font-semibold">Demonstration admin panel — try anything!</span>{" "}
+              This is the real control panel that comes with your website. Go ahead and edit content,
+              upload images, and hit Save to see how it feels — nothing you change here is stored, so
+              you can&apos;t break anything. On <span className="font-semibold">your</span> own site this
+              panel is private, and every edit saves instantly to your live pages.
             </p>
           </div>
         )}
