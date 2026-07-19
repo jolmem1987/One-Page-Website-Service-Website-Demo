@@ -58,6 +58,26 @@ function revalidatePublicAndAdmin() {
   revalidatePath("/admin", "layout");
 }
 
+/**
+ * Resolves an image field that supports either an uploaded file or a pasted URL.
+ * If a file is provided it is uploaded (stored in the DB by default) and its URL
+ * returned; otherwise the pasted URL is used, falling back to the existing value.
+ */
+async function resolveImageUrl(
+  fd: FormData,
+  fileField: string,
+  urlValue: string,
+  fallback: string,
+): Promise<{ ok: true; url: string } | { ok: false; message: string }> {
+  const file = fd.get(fileField);
+  if (file instanceof File && file.size > 0) {
+    const result = await uploadImage(file, file.name);
+    if (!result.ok) return { ok: false, message: result.error ?? "Image upload failed." };
+    return { ok: true, url: result.url ?? "" };
+  }
+  return { ok: true, url: urlValue || fallback };
+}
+
 /* ============================ auth ============================ */
 
 export async function loginAction(_prev: ActionResult, fd: FormData): Promise<ActionResult> {
@@ -139,11 +159,13 @@ export async function saveBrandingAction(_prev: ActionResult, fd: FormData): Pro
     accentColor: str(fd, "accentColor"),
   });
   if (!parsed.success) return { ok: false, message: "Please enter valid 6-digit hex colors (e.g. #1f2933)." };
+  const logo = await resolveImageUrl(fd, "logoFile", str(fd, "logoUrl"), config.branding.logoUrl ?? "");
+  if (!logo.ok) return logo;
   try {
     await store.saveBranding({
       ...config.branding,
       ...parsed.data,
-      logoUrl: str(fd, "logoUrl") || null,
+      logoUrl: logo.url || null,
       faviconUrl: str(fd, "faviconUrl") || null,
       headingFont: str(fd, "headingFont") || config.branding.headingFont,
       bodyFont: str(fd, "bodyFont") || config.branding.bodyFont,
@@ -228,13 +250,15 @@ export async function saveHeroAction(_prev: ActionResult, fd: FormData): Promise
   const g = await guard();
   if (g) return g;
   const config = await getSiteConfig();
+  const img = await resolveImageUrl(fd, "imageFile", str(fd, "imageUrl"), config.hero.imageUrl);
+  if (!img.ok) return img;
   try {
     await store.saveHero({
       headline: str(fd, "headline"),
       subheadline: str(fd, "subheadline"),
       primaryCtaLabel: str(fd, "primaryCtaLabel") || config.hero.primaryCtaLabel,
       secondaryCtaLabel: str(fd, "secondaryCtaLabel") || config.hero.secondaryCtaLabel,
-      imageUrl: str(fd, "imageUrl") || config.hero.imageUrl,
+      imageUrl: img.url,
       imageAlt: str(fd, "imageAlt"),
     });
     revalidatePublicAndAdmin();

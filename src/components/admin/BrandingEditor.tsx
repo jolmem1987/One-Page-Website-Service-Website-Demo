@@ -79,8 +79,14 @@ export function BrandingEditor({ branding }: { branding: BrandingSettings }) {
           </select>
         </div>
         <div>
-          <label className="field-label">Logo URL (optional)</label>
-          <input name="logoUrl" defaultValue={branding.logoUrl ?? ""} className="field-input" placeholder="https://…/logo.png" />
+          <label className="field-label">Logo (optional)</label>
+          <input type="file" name="logoFile" accept="image/*" className="field-input" />
+          <p className="field-hint">Upload a logo image — or paste a URL below.</p>
+          <input name="logoUrl" defaultValue={branding.logoUrl ?? ""} className="field-input mt-2" placeholder="https://…/logo.png" />
+          {branding.logoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={branding.logoUrl} alt="" className="mt-2 h-10 rounded border border-black/10 object-contain" />
+          )}
         </div>
         <div>
           <label className="field-label">Favicon URL (optional)</label>

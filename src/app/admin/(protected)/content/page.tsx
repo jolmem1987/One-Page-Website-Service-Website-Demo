@@ -60,9 +60,9 @@ export default async function ContentPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="field-label">Hero image URL</label>
-                <input name="imageUrl" defaultValue={config.hero.imageUrl} className="field-input" />
-                <p className="field-hint">Use a real photo of your work when possible.</p>
+                <label className="field-label">Hero image</label>
+                <input type="file" name="imageFile" accept="image/*" className="field-input" />
+                <p className="field-hint">Upload a photo from your device — it saves to your site when you hit Save.</p>
               </div>
               <div>
                 <label className="field-label">Hero image alt text</label>
@@ -70,6 +70,17 @@ export default async function ContentPage() {
                 <p className="field-hint">Describe the image for accessibility and SEO.</p>
               </div>
             </div>
+            <div>
+              <label className="field-label">…or paste an image URL instead</label>
+              <input name="imageUrl" defaultValue={config.hero.imageUrl} className="field-input" />
+            </div>
+            {config.hero.imageUrl && (
+              <div>
+                <p className="field-hint mb-1">Current hero image:</p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={config.hero.imageUrl} alt="" className="h-24 rounded border border-black/10 object-cover" />
+              </div>
+            )}
           </SaveForm>
         </Card>
 
