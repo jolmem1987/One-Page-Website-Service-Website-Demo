@@ -53,6 +53,22 @@ export const activityTypeEnum = pgEnum("activity_type", [
 
 export const emailStatusEnum = pgEnum("email_status", ["DRAFT", "SENT", "FAILED"]);
 
+/* ============================ MEDIA ============================ */
+
+/**
+ * Uploaded images stored directly in Postgres, so the admin can upload photos
+ * with no external object store (WordPress-style, self-contained). Bytes are
+ * base64-encoded in `data` and served by the /api/media/[id] route. Keep
+ * uploads reasonably sized (a few MB max) to stay within DB limits.
+ */
+export const media = pgTable("media", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  data: text("data").notNull(),
+  contentType: text("content_type").notNull(),
+  filename: text("filename"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 /* ============================ AUTH ============================ */
 
 export const adminUsers = pgTable("admin_users", {

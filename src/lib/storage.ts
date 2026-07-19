@@ -1,16 +1,23 @@
 import "server-only";
 
+import { getDb } from "./db";
+import { media } from "./db/schema";
+
 /**
  * Image storage abstraction.
  *
- * Supports Vercel Blob or Cloudinary. If no provider is configured, uploads are
- * disabled (the admin UI shows configuration guidance and keeps upload controls
- * off) while the site continues to build and use seeded demo images.
+ * DEFAULT (no configuration): uploads are stored directly in the Postgres
+ * database and served by the /api/media/[id] route — a self-contained,
+ * WordPress-style media library that needs no external object store.
  *
- * Binary images are NEVER stored in Postgres — only their public URLs.
+ * Optionally supports Vercel Blob or Cloudinary if IMAGE_STORAGE_PROVIDER is
+ * set to one of those (and the matching credentials are provided).
  */
 
-export type StorageProvider = "vercel-blob" | "cloudinary" | "none";
+export type StorageProvider = "vercel-blob" | "cloudinary" | "database" | "none";
+
+/** Uploads larger than this are rejected to stay within DB/query limits. */
+const MAX_UPLOAD_BYTES = 4.5 * 1024 * 1024;
 
 export interface StorageStatus {
   configured: boolean;
@@ -45,12 +52,13 @@ export function getStorageStatus(): StorageStatus {
     };
   }
 
+  // Default: store uploads directly in the database. Always available as long
+  // as a database is connected — no external store or extra config required.
+  if (getDb()) return { configured: true, provider: "database" };
   return {
     configured: false,
     provider: "none",
-    reason:
-      "Image uploads are disabled. Set IMAGE_STORAGE_PROVIDER to 'vercel-blob' or 'cloudinary' " +
-      "(and the matching credentials) to enable uploading real project photos.",
+    reason: "Connect a database (DATABASE_URL) to enable image uploads.",
   };
 }
 
@@ -65,6 +73,8 @@ export async function uploadImage(file: File, keyHint: string): Promise<UploadRe
   if (!status.configured) return { ok: false, error: status.reason };
 
   try {
+    if (status.provider === "database") return uploadToDatabase(file);
+
     if (status.provider === "vercel-blob") {
       const mod = await import("@vercel/blob").catch(() => null);
       if (!mod) return { ok: false, error: "Install @vercel/blob to enable uploads." };
@@ -96,4 +106,31 @@ export async function uploadImage(file: File, keyHint: string): Promise<UploadRe
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Upload failed." };
   }
+}
+
+/**
+ * Stores an uploaded image directly in Postgres (base64) and returns a stable
+ * same-origin URL served by /api/media/[id]. No external object store needed.
+ */
+async function uploadToDatabase(file: File): Promise<UploadResult> {
+  const db = getDb();
+  if (!db) return { ok: false, error: "No database connected." };
+  if (file.size === 0) return { ok: false, error: "The selected file is empty." };
+  if (file.size > MAX_UPLOAD_BYTES) {
+    const mb = Math.floor(MAX_UPLOAD_BYTES / (1024 * 1024));
+    return { ok: false, error: `Image is too large (max ${mb} MB). Please resize it and try again.` };
+  }
+  const contentType = file.type || "application/octet-stream";
+  if (!contentType.startsWith("image/")) {
+    return { ok: false, error: "Only image files can be uploaded." };
+  }
+
+  const data = Buffer.from(await file.arrayBuffer()).toString("base64");
+  const rows = await db
+    .insert(media)
+    .values({ data, contentType, filename: file.name })
+    .returning({ id: media.id });
+  const id = rows[0]?.id;
+  if (!id) return { ok: false, error: "Failed to save the image." };
+  return { ok: true, url: `/api/media/${id}` };
 }
