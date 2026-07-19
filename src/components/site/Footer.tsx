@@ -82,6 +82,11 @@ export function Footer({ config }: { config: SiteConfig }) {
             <Link href="/gallery" className="hover:text-white">
               Gallery
             </Link>
+            {/* Owner sign-in. Logging in here (unlike the visitor "Admin demo"
+                button) gives full edit access where changes are saved for real. */}
+            <Link href="/admin/login" className="hover:text-white">
+              Owner login
+            </Link>
           </nav>
         </div>
         {config.isDemo && (
