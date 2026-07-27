@@ -13,6 +13,7 @@ Built for roofers, HVAC companies, plumbers, electricians, landscapers, painters
 - **Public site (3 pages):** Home (`/`), About (`/about`), Gallery (`/gallery`) — hero, trust indicators, services, why-choose-us, process, featured projects, testimonials, service area, FAQ, estimate form, footer.
 - **Admin panel (`/admin`):** dashboard, leads + detail, content editor, gallery manager, Local SEO Center, off-site SEO action plan, settings, and a guided onboarding wizard.
 - **Lead management:** validated estimate form (honeypot + rate limiting), statuses, notes, activities, follow-ups, estimated value, CSV export, and email drafts/templates.
+- **On-site assistant:** a chat widget that answers visitor questions from the site's own published content (services, FAQs, service area, hours, projects) and routes them to the estimate form or a phone call. No API key, no external service, no per-message cost — see [docs/CHATBOT.md](docs/CHATBOT.md).
 - **SEO automation:** metadata, canonical URLs, Open Graph/Twitter cards, `sitemap.xml`, `robots.txt`, LocalBusiness JSON-LD (correct subtype per category), breadcrumbs, and FAQ structured data (only when eligible). Admin pages are always `noindex`.
 - **Graceful degradation:** builds and renders demo content with **no credentials**. Database, email, and image storage are each optional and fail safe.
 
@@ -122,6 +123,9 @@ Set `RESEND_API_KEY`, `EMAIL_FROM` (a verified domain), and `LEAD_NOTIFICATION_E
 ### Image storage (Vercel Blob or Cloudinary)
 Set `IMAGE_STORAGE_PROVIDER` and the matching keys. Without storage, upload controls are disabled with guidance, and you can still add images by URL. Binary images are **never** stored in Postgres — only URLs. See [`src/lib/storage.ts`](src/lib/storage.ts).
 
+### Chat assistant AI phrasing (OpenAI)
+The chat widget runs **with no key at all**, answering from site content via local keyword retrieval. Set `CHATBOT_AI="true"` plus `OPENAI_API_KEY` to have replies phrased in free-form prose instead — retrieval is unchanged, the model may only use retrieved site copy, and any API error falls back to the built-in templates so the bot never goes dark. See [docs/CHATBOT.md](docs/CHATBOT.md).
+
 ### Search Console & Analytics
 Add your **GSC verification token**, **GA4 measurement ID**, optional **GTM container ID**, and **Bing verification** in **Admin → Local SEO Center**, or via env vars. Tracking scripts load **only** when a valid ID is present. The admin never claims Google "verified" anything it can't confirm.
 
@@ -163,12 +167,14 @@ src/
     (public)/            Home, About, Gallery, lead server action
     admin/               login + (protected) dashboard, leads, content, gallery, seo, settings, onboarding
     api/leads/           JSON/form lead endpoint
+    api/chat/            on-site assistant endpoint (same-origin, rate limited)
     sitemap.ts, robots.ts
   components/            site/, admin/, ui/ + Theme/JsonLd/Analytics
   lib/
     db/                  schema, client, migrate, seed
     seo/                 metadata, structured-data, checks, project-score
     admin/               store (all DB writes), actions (auth-guarded), types
+    chatbot/             knowledge base built from site content, BM25 search, intents, replies
     site-config.ts       ← single source of truth (demo content)
     auth.ts, data.ts, leads.ts, email.ts, storage.ts, theme.ts, validation.ts, rate-limit.ts, utils.ts
 drizzle/                 SQL migration + journal
